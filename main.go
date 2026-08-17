@@ -1,6 +1,7 @@
 package main
 
 import (
+	"errors"
 	"fmt"
 	"os"
 	"strconv"
@@ -8,11 +9,21 @@ import (
 
 const accountBalanceFile = "balance.txt"
 
-func getBalanceFromFile() float64 {
-	data, _ := os.ReadFile(accountBalanceFile)
+func getBalanceFromFile() (float64, error) {
+	data, err := os.ReadFile(accountBalanceFile)
+
+	if err != nil {
+		return 0, errors.New("Failed to read file")
+	}
+
 	balanceText := string(data)
-	balance, _ := strconv.ParseFloat(balanceText, 64)
-	return balance
+	balance, err := strconv.ParseFloat(balanceText, 64)
+
+	if err != nil {
+		return 0, errors.New("Failed to parse stored balance values")
+	}
+
+	return balance, nil
 }
 
 func writeBalanceToFIle(balance float64) {
@@ -20,13 +31,31 @@ func writeBalanceToFIle(balance float64) {
 	os.WriteFile("balance.txt", []byte(balanceText), 0644)
 }
 
+func validateAmount(amount float64) error {
+
+	if amount < 0 {
+		return errors.New("Value cannot be negative.")
+	}
+
+	if amount == 0 {
+		return errors.New("Amount cannot be 0")
+	}
+
+	return nil
+}
+
 func main() {
+
+	var accountBalance, err = getBalanceFromFile()
+
+	if err != nil {
+		fmt.Println("ERROR:", err)
+		fmt.Println("------------")
+	}
 
 	fmt.Println("Welcome to devyank's bank:")
 
 	for {
-
-		var accountBalance float64 = 1000
 
 		fmt.Println("What do you want to do?")
 		fmt.Println("1. Check balance")
@@ -46,10 +75,13 @@ func main() {
 			var deposit float64
 			fmt.Scan(&deposit)
 
-			if deposit <= 0 {
-				fmt.Println("Your value should be greater than 0")
+			err := validateAmount(deposit)
+
+			if err != nil {
+				fmt.Println("ERROR:", err)
 				continue
 			}
+
 			accountBalance += deposit
 			fmt.Println("Your balance now is:", accountBalance)
 			writeBalanceToFIle(accountBalance)
@@ -59,6 +91,12 @@ func main() {
 			fmt.Println("How much you want to withdraw: ")
 			var withdraw float64
 			fmt.Scan(&withdraw)
+
+			err := validateAmount(withdraw)
+			if err != nil {
+				fmt.Println("ERROR:", err)
+				continue
+			}
 
 			if withdraw > accountBalance {
 				fmt.Println("You can't withdraw this value!")
