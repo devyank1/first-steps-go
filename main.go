@@ -34,11 +34,11 @@ func writeBalanceToFIle(balance float64) {
 func validateAmount(amount float64) error {
 
 	if amount < 0 {
-		return errors.New("Value cannot be negative.")
+		return errors.New("value cannot be negative")
 	}
 
 	if amount == 0 {
-		return errors.New("Amount cannot be 0")
+		return errors.New("amount cannot be 0")
 	}
 
 	return nil
