@@ -1,0 +1,23 @@
+//package main
+main package of the project / GO IS ORGANIZED BY PCKGS.
+main is a special name to say where's the application is building.
+
+
+// import "fmt"
+go standard library -> formats I/O
+
+
+function where your application will be built
+//func main() {
+
+	fmt.Println("Hello World")
+}
+
+
+// GO MODULES
+One module consist in multiple packages, a module is simply a go project
+=> go mod init example.com/name-of-your-package-example
+=> go build will create an executable of your application, just using
+    ./name-of-your-build
+
+// VALUES AND TYPES
